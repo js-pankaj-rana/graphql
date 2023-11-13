@@ -12,32 +12,78 @@ const users = [
         id: '2',
         name: 'Anuj',
         email: 'anuj@gmail.com'
+    },
+    {
+        id: '3',
+        name: 'Rahul Maheshwari',
+        email: 'rahulmaheshwari@gmail.com'
     }
 ]
 
+const comments = [
+    {
+        id: '201',
+        text: 'This is my text example',
+        author: '1'
+    },
+    {
+        id: '202',
+        text: 'This is my text example',
+        author: '2'
+    },
+    {
+        id: '203',
+        text: 'This is my text example',
+        author: '1'
+    },
+    {
+        id: '204',
+        text: 'This is my text example',
+        author: '3'
+    },
+    {
+        id: '205',
+        text: 'This is my text example',
+        author: '2'
+    },
+    {
+        id: '206',
+        text: 'This is my text example',
+        author: '3'
+    },
+    {
+        id: '207',
+        text: 'This is my text example',
+        author: '3'
+    }
+]
 const posts = [
     {
         id: '2123',
         title: 'Post Title 1',
         body: 'Some body content of the post 1',
-        published: 2009
+        published: true,
+        author: '1'
     },
     {
         id: '2012',
         title: 'Post Title 2',
         body: 'Some body content of the post 2',
-        published: 2019
+        published: true,
+        author: '2'
     },
     {
         id: '2125',
         title: 'Post Title 3',
         body: 'Some body content of the post 3',
-        published: 2020
+        published: true,
+        author: '1'
     },{
         id: '2103',
         title: 'Post Title 4',
         body: 'Some body content of the post 4',
-        published: 2021
+        published: true,
+        author: '2'
     }
 ]
 
@@ -52,6 +98,7 @@ const yoga = createYoga({
             greeting(name: String, age: Int): String
             add(a:Float!, b:Float!): Float! 
             me: User!
+            comments: [Comment!]!
         },
         type User {
             id: ID!
@@ -64,7 +111,14 @@ const yoga = createYoga({
             id: ID!
             title: String!
             body: String!
-            published: Int!
+            published: Boolean!
+            author: User!
+        }
+
+        type Comment {
+            id: ID!
+            text: String!
+            author: User!
         }
 
         `,
@@ -105,7 +159,25 @@ const yoga = createYoga({
                         email: 'abc@gmail.com',
                         age: 12
                     }
+                },
+                comments(){
+                    return comments;
                 }
+            },
+            Post: {
+                author(parents, args, ctx, info){
+                    return users.find((user) => {
+                        return user.id ===parents.author
+                    })
+                } 
+            },
+            Comment: {
+                author(parents, args, ctx, info){
+                    // console.log("parents", parents);
+                    return users.find((user) => {
+                        return user.id === parents.author
+                    })
+                } 
             }
         }
     })
