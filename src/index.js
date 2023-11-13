@@ -105,6 +105,7 @@ const yoga = createYoga({
             name: String!
             email: String!
             age: Int
+            comments: [Comment!]!
         },
 
         type Post {
@@ -178,6 +179,13 @@ const yoga = createYoga({
                         return user.id === parents.author
                     })
                 } 
+            },
+            User: {
+                comments(parents, args, ctx, info){
+                    return comments.filter( (comment) => {
+                        return comment.author  === parents.id
+                    })
+                }
             }
         }
     })
