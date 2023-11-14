@@ -1,6 +1,7 @@
 import { createServer } from 'node:http'
 import { createSchema, createYoga  } from 'graphql-yoga'
-import { title } from 'node:process'
+import { v4 as uuidv4 } from 'uuid';
+
 
 const users = [
     {
@@ -100,6 +101,11 @@ const yoga = createYoga({
             me: User!
             comments: [Comment!]!
         },
+
+        type Mutation {
+            createUser(name: String!, email: String!, age: Int): User!
+        },
+
         type User {
             id: ID!
             name: String!
@@ -163,6 +169,24 @@ const yoga = createYoga({
                 },
                 comments(){
                     return comments;
+                }
+            },
+            Mutation: {
+                createUser(parents, args, ctx, info){
+                    const userExits = users.some( user => user.email === args.email);
+                    if(userExits){
+                        return new Error("User already exits")
+                    }
+                    const user = {
+                        id: uuidv4(),
+                        name: args.name,
+                        email: args.email,
+                        age: args.age
+                    }
+                    users.push(
+                        user
+                    )
+                    return user;
                 }
             },
             Post: {
